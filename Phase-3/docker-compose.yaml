@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: D:\Tools\Phase-3\Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db   # Database service name
+      - DB_USER=root
+      - DB_PASSWORD=A7med2452003
+      - DB_NAME=package_tracking
+
+  frontend:
+    build:
+      context: D:\Tools\Phase-3\frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:8080"
+    networks:
+      - app-network
+    depends_on:
+      - backend 
+
+  db:
+    build:
+      context: D:/Tools/Phase-3/Database
+      dockerfile: Dockerfile
+    hostname: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: A7med2452003
+      MYSQL_DATABASE: package_tracking
+    ports:
+      - "3307:3306"  # Exposed port for local access, but Docker uses internal 3306
+    networks:
+      - app-network
+    volumes:
+      - ./Database/db-init:/docker-entrypoint-initdb.d
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  simple: {}
